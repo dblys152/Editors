@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd">
+<mapper namespace="post">
+    <insert id="insertPost">
+        INSERT  INTO POST   (
+                                PST_NO
+                              , PST_CL_NO
+                              , TPC_CTG_NO
+                              , PST_TTL
+                              , PST_DISP_CD
+                              , TOP_PST_YN
+                              , WRT_MBR_NO
+                              , WRT_DTT
+                              , VIEW_CNT
+                              , CMNT_YN
+                              , RCM_YN
+                              , PST_ST_DTT
+                              , PST_ED_DTT
+                              , DEL_YN
+                              , REG_NO
+                              , REG_DTT
+                              , MOD_NO
+                              , MOD_DTT
+                            )
+        VALUES              (
+                                ${pstNo}
+                              , ${pstClCd}
+                              , #{tpcCtgNo}
+                              , #{pstTtl}
+                              , ${pstDispCd}
+                              , #{topPstYn}
+                              , #{wrtMbrNo}
+                              , #{wrtDtt}
+                              , ${viewCnt}
+                              , #{cmntYn}
+                              , #{rcmYn}
+                              , #{pstStDtt}
+                              , #{pstEdDtt}
+                              , #{regNo}
+                              , NOW()
+                              , #{regNo}
+                              , NOW()
+                            )
+    </insert>
+
+    <select id="selectPost">
+        SELECT
+                P.PST_NO
+              , P.PST_TTL
+              , PC.PST_CNTN
+              , P.TPC_CTG_NO
+              , TC.CTG_NM TPC_CTG_NM
+              , P.PST_DISP_CD
+              , C.COM_CD_NM
+              , P.TOP_PST_YN
+              , P.WRT_MBR_NO
+              , P.WRT_DTT
+              , P.VIEW_CNT
+              , P.CMNT_YN
+              , P.RCM_YN
+              , P.PST_ST_DTT
+              , P.PST_ED_DTT
+        FROM	POST	        P
+        JOIN 	POST_CONTENTS   PC
+        ON 		P.PST_NO = ${pstNo}
+        AND 	P.DEL_YN = 'N'
+        AND 	P.PST_NO = PC.PST_NO
+        LEFT	JOIN CTG TC
+        ON 		P.TPC_CTG_NO = TC.CTG_NO
+        LEFT	JOIN COM_CODE C
+        ON 		P.PST_DISP_CD = C.COM_CD
+        WHERE	1 = 1
+    </select>
+</mapper>
