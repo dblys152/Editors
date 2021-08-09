@@ -10,8 +10,25 @@ router.get('/', async (req, res, next) => {
 });
 
 router.post('/post', async (req, res, next) => {
+    console.log(req.body);
     let data = req.body;
-
+    let postForm = new PostForm();
+    postForm.setPstTtl(data.pstTtl);
+    postForm.setPstCntn(data.pstCntn);
+    postForm.setTpcCtgNo(data.tpcCtgNo);
+    postForm.setPstDispCd(data.pstDispCd);
+    postForm.setCmntYn(data.cmntYn);
+    postForm.setRcmYn(data.RcmYn);
+    postForm.setTagNm(data.tagNm);
+    postForm.setPstStDtt(data.pstStDtt);
+    postForm.setTopPstYn(data.topPstYn);
+    try {
+        let mbrNo = 1;
+        let pstNo = await postService.insertPost(postForm, mbrNo);
+        res.redirect('/view/' + pstNo);
+    } catch(err) {
+        next(err);
+    }
 });
 
 router.get('/view/:pstNo', async (req, res, next) => {
