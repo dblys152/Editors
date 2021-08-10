@@ -1,4 +1,5 @@
 const mysql = require('mysql2/promise');
+require('dotenv').config({ path : ".env.development" });  //env 환경변수 사용 모듈
 
 const db_info = {
     host: process.env.DB_HOST,

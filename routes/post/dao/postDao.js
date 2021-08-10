@@ -15,6 +15,17 @@ exports.insertPost = async (conn, postForm) => {
     }
 };
 
+exports.insertPostContents = async (conn, postForm) => {
+    try {
+        let sql = mybatisMapper.getStatement('post', 'insertPostContents', postForm, sqlFormat);
+        console.log(sql);
+        await conn.execute(sql);
+    } catch(err) {
+        console.log(err);
+        throw {"status": 500, "message": "SQL execution error"};
+    }
+};
+
 exports.selectPost = async (conn, postForm) => {
     try {
         let sql = mybatisMapper.getStatement('post', 'selectPost', postForm, sqlFormat);

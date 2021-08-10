@@ -3,8 +3,7 @@
 <mapper namespace="post">
     <insert id="insertPost">
         INSERT  INTO POST   (
-                                PST_NO
-                              , PST_CL_NO
+                                PST_CL_NO
                               , TPC_CTG_NO
                               , PST_TTL
                               , PST_DISP_CD
@@ -16,31 +15,40 @@
                               , RCM_YN
                               , PST_ST_DTT
                               , PST_ED_DTT
-                              , DEL_YN
                               , REG_NO
                               , REG_DTT
                               , MOD_NO
                               , MOD_DTT
                             )
         VALUES              (
-                                ${pstNo}
-                              , ${pstClCd}
+                                ${pstClNo}
                               , #{tpcCtgNo}
                               , #{pstTtl}
-                              , ${pstDispCd}
+                              , #{pstDispCd}
                               , #{topPstYn}
-                              , #{wrtMbrNo}
-                              , #{wrtDtt}
-                              , ${viewCnt}
+                              , ${wrtMbrNo}
+                              , NOW()
+                              , 0
                               , #{cmntYn}
                               , #{rcmYn}
-                              , #{pstStDtt}
+                              , IFNULL(#{pstStDtt}, NOW())
                               , #{pstEdDtt}
-                              , #{regNo}
+                              , ${regNo}
                               , NOW()
-                              , #{regNo}
+                              , ${modNo}
                               , NOW()
                             )
+    </insert>
+
+    <insert id="insertPostContents">
+        INSERT  INTO POST_CONTENTS  (
+                                        PST_NO
+                                      , PST_CNTN
+                                    )
+        VALUES                      (
+                                        ${pstNo}
+                                      , #{pstCntn}
+                                    )
     </insert>
 
     <select id="selectPost">

@@ -5,7 +5,6 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const routes = require('./routes');
 const expressLayouts = require('express-ejs-layouts');
-require('dotenv').config({ path : ".env.development" });  //env 환경변수 사용 모듈
 
 const app = express();
 
@@ -37,7 +36,7 @@ app.use(function(err, req, res, next) {
   console.log(err.message);
   // render the error page
   res.status(err.status || 500);
-  res.render('common/error');
+  res.json(err);
 });
 
 module.exports = app;

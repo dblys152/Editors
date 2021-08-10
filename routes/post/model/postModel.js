@@ -2,6 +2,8 @@
 class PostForm {
     pstNo       = null;   //게시글번호
     #pstNo      = {value: null, dataType: "number", required: true};
+    pstClNo    = null;   //게시글분류번호
+    #pstClNo   = {value: null, dataType: "number", required: true};
     tpcCtgNo    = null;   //주제카테고리번호
     #tpcCtgNo   = {value: null, dataType: "string", required: true};
     pstTtl      = null;   //게시글제목
@@ -27,17 +29,17 @@ class PostForm {
     pstEdDtt    = null;   //게시종료일시
     #pstEdDtt   = {value: null, dataType: "string", required: false};
     regNo       = null;   //등록자
-    #regNo      = {value: null, dataType: "string", required: true};
+    #regNo      = {value: null, dataType: "number", required: true};
     regDtt      = null;   //등록일시
     #regDtt     = {value: null, dataType: "string", required: true};
     modNo       = null;   //수정자
-    #modNo      = {value: null, dataType: "string", required: true};
+    #modNo      = {value: null, dataType: "number", required: true};
     modDtt      = null;   //수정일시
     #modDtt     = {value: null, dataType: "string", required: true};
     tagSeq      = null;   //태그순번
     #tagSeq     = {value: null, dataType: "number", required: true};
     tagNm       = null;   //태그명
-    #tagNm      = {value: null, dataType: "string", required: true};
+    #tagNm      = {value: null, dataType: "string", required: false};
 
     constructor() {}
 
@@ -63,6 +65,7 @@ class PostForm {
     }
 
     setPstNo(pstNo) { PostForm.typeCheck(this.#pstNo, pstNo, "pstNo"); this.pstNo = this.#pstNo.value; }
+    setPstClNo(pstClNo) { PostForm.typeCheck(this.#pstClNo, pstClNo, "tpcCtgNo"); this.pstClNo = this.#pstClNo.value; }
     setTpcCtgNo(tpcCtgNo) { PostForm.typeCheck(this.#tpcCtgNo, tpcCtgNo, "tpcCtgNo"); this.tpcCtgNo = this.#tpcCtgNo.value; }
     setPstTtl(pstTtl) { PostForm.typeCheck(this.#pstTtl, pstTtl, "pstTtl"); this.pstTtl = this.#pstTtl.value; }
     setPstCntn(pstCntn) { PostForm.typeCheck(this.#pstCntn, pstCntn, "pstCntn"); this.pstCntn = this.#pstCntn.value; }
@@ -79,8 +82,8 @@ class PostForm {
     setRegDtt(regDtt) { PostForm.typeCheck(this.#regDtt, regDtt, "regDtt"); this.regDtt = this.#regDtt.value; }
     setModNo(modNo) { PostForm.typeCheck(this.#modNo, modNo, "modNo"); this.modNo = this.#modNo.value; }
     setModDtt(modDtt) { PostForm.typeCheck(this.#modDtt, modDtt, "modDtt"); this.modDtt = this.#modDtt.value; }
-    setTagSeq(tagSeq) { tagForm.typeCheck(this.#tagSeq, tagSeq, "tagSeq"); this.tagSeq = this.#tagSeq.value; }
-    setTagNm(tagNm) { tagForm.typeCheck(this.#tagNm, tagNm, "tagNm"); this.tagNm = this.#tagNm.value; }
+    setTagSeq(tagSeq) { PostForm.typeCheck(this.#tagSeq, tagSeq, "tagSeq"); this.tagSeq = this.#tagSeq.value; }
+    setTagNm(tagNm) { PostForm.typeCheck(this.#tagNm, tagNm, "tagNm"); this.tagNm = this.#tagNm.value; }
 }
 
 module.exports = { PostForm };

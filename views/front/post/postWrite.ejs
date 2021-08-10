@@ -3,7 +3,7 @@
 		<input type="text" class="form-control" name="pstTtl" value="" placeholder="제목을 입력하세요." style="width:100%"/>
 	</div>
 	<div class="form-group">
-		<textarea name="pstCntn" class="edit_contents"></textarea>
+		<textarea name="pstCntn" id="edit_contents"></textarea>
 	</div>
 	<div class="form-group float-right">
 		<button type="button" class="btn btn-success" data-toggle="modal" data-target="#postPop">등록</button>
@@ -116,7 +116,7 @@
 <script>
 //Tiny Editor
 tinymce.init({
-	selector: ".edit_contents",
+	selector: "#edit_contents",
 	theme: "modern",
 	language_url: '/tinymce/langs/ko_KR.js',
 	menubar:false,
@@ -128,7 +128,7 @@ tinymce.init({
 	automatic_uploads: true,
 	file_picker_types: 'image',
 	/* and here's our custom image picker*/
-	images_upload_url: '/file/uploadImg',
+	images_upload_url: '/file/edit-img',	//이미지 업로드 url
 	paste_data_images: true,
 	image_dimensions: false,
 	setup: function (editor) {
@@ -250,20 +250,24 @@ window.addEventListener('DOMContentLoaded', () => {
 
 /* 게시글 등록 함수 */
 let fn_postSave = (dataForm) => {
+	tinymce.triggerSave();	//양식 제출 전 실행
+
 	fetch('/post', {
         method: 'POST'
       , body: JSON.stringify(dataForm)
+	  , headers: {"Content-Type": "application/json"}
     }).then(res => res.json()
-    ).then(res => {
-        if(res.ret > 0) {
-            alert('게시글이 등록되었습니다.');
-            
-        } else {
-            alert('게시글 등록 실패하였습니다.');
-        }
+    ).then(json => { 
+		if(json.status >= 200 && json.status < 300) {
+			alert('게시글이 등록되었습니다.');
+			location.href='/view/' + json.pstNo;
+		} else {
+			alert('게시글 등록 실패하였습니다.');
+			console.log(json.message);
+		}      
     }).catch(error => {
-        console.error('Error:', error);
-        alert('게시글 등록 실패하였습니다.');
+		alert('게시글 등록 실패하였습니다.');
+        console.log(error);
     });
 };
 </script>

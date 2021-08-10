@@ -12,6 +12,8 @@ exports.insertPost = async (postForm, mbrNo) => {
         postForm.setRegNo(mbrNo);
         postForm.setModNo(mbrNo);
         let pstNo = await postDao.insertPost(conn, postForm);
+        postForm.setPstNo(pstNo);
+        await postDao.insertPostContents(conn, postForm);
         // if(pstNo != null && postForm.tagNm != null) {
         //     let tagList = postForm.tagNm.split(' ');
         // }
