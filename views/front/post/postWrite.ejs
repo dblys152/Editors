@@ -152,17 +152,17 @@ tinymce.init({
 		input.setAttribute('type', 'file');
 		input.setAttribute('accept', 'image/*');
 		input.onchange = function() {
-			let file = this.files[0];
+			let user_file = this.files[0];
 			let reader = new FileReader();
 			reader.onload = function () {
 				let id = 'blobid' + (new Date()).getTime();
 				let blobCache =  tinymce.activeEditor.editorUpload.blobCache;
 				let base64 = reader.result.split(',')[1];
-				let blobInfo = blobCache.create(id, file, base64);
+				let blobInfo = blobCache.create(id, user_file, base64);
 				blobCache.add(blobInfo);
-				cb(blobInfo.blobUri(), { title: file.name });
+				cb(blobInfo.blobUri(), { title: user_file.name });
 			};
-			reader.readAsDataURL(file);
+			reader.readAsDataURL(user_file);
 		};
 		input.click();
 	}
