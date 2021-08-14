@@ -32,8 +32,9 @@ exports.selectPost = async (pstNo) => {
     const conn = await dbConfig.getMysqlConn();
     if(!conn) throw {"status": 500, "message": "DB connection error"};
     try {
-        await postDao.selectPost(conn, {"pstNo": pstNo});
+        let postInfo = await postDao.selectPost(conn, {"pstNo": pstNo});
         conn.release();             //DB연결 반환
+        return postInfo;
     } catch(err) {
         conn.release();             //DB연결 반환
         throw err;

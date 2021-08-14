@@ -1,3 +1,23 @@
 <div class="content">
-    test
+    <div class="row">
+        <div class="col-lg-12">
+            <!-- Post content-->
+            <article>
+                <!-- Post header-->
+                <header class="mb-4">
+                    <!-- Post title-->
+                    <h1 class="fw-bolder mb-1"><%= postInfo.PST_TTL %></h1>
+                    <!-- Post meta content-->
+                    <div class="text-muted fst-italic mb-2"><%= postInfo.WRT_DTT %></div>
+                    <!-- Post categories-->
+                    <a class="badge bg-info text-white link-light" href="#!">Web Design</a>
+                    <a class="badge bg-info text-white link-light" href="#!">Freebies</a>
+                </header>
+                <!-- Post content-->
+                <section class="mb-5">
+                    <%- postInfo.PST_CNTN %>
+                </section>
+            </article>
+        </div>
+    </div>
 </div>

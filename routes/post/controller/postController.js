@@ -38,7 +38,7 @@ router.get('/view/:pstNo', async (req, res, next) => {
     }
     try {
         let postInfo = await postService.selectPost(pstNo);
-        res.render('front/post/postView.ejs', postInfo);
+        res.render('front/post/postView.ejs', {postInfo});
     } catch(err) {
         next(err);
     }

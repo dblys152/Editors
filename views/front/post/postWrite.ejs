@@ -117,20 +117,22 @@
 //Tiny Editor
 tinymce.init({
 	selector: "#edit_contents",
-	theme: "modern",
+	//theme: "modern",
 	language_url: '/tinymce/langs/ko_KR.js',
 	menubar:false,
 	//height: 600,
 	autoresize_min_height: 400,
 	autoresize_max_height: 800,
 	plugins: "autolink autosave code link media image table textcolor autoresize paste",
-	toolbar: "undo redo | fontselect | fontsizeselect | bold underline italic forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | table link media custom_image image code",
+	toolbar: "undo redo | fontselect | fontsizeselect | bold underline italic forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | table link media image code",
 	automatic_uploads: true,
 	file_picker_types: 'image',
-	/* and here's our custom image picker*/
 	images_upload_url: '/file/edit-img',	//이미지 업로드 url
+	image_title: true,
 	paste_data_images: true,
-	image_dimensions: false,
+	//image_dimensions: false,
+	relative_urls: false,
+	//remove_script_host: false,
 	setup: function (editor) {
 		editor.on('init', function(args) {
 			editor = args.target;
@@ -152,17 +154,17 @@ tinymce.init({
 		input.setAttribute('type', 'file');
 		input.setAttribute('accept', 'image/*');
 		input.onchange = function() {
-			let user_file = this.files[0];
+			let file = this.files[0];
 			let reader = new FileReader();
 			reader.onload = function () {
 				let id = 'blobid' + (new Date()).getTime();
 				let blobCache =  tinymce.activeEditor.editorUpload.blobCache;
 				let base64 = reader.result.split(',')[1];
-				let blobInfo = blobCache.create(id, user_file, base64);
+				let blobInfo = blobCache.create(id, file, base64);
 				blobCache.add(blobInfo);
-				cb(blobInfo.blobUri(), { title: user_file.name });
+				cb(blobInfo.blobUri(), { title: file.name });
 			};
-			reader.readAsDataURL(user_file);
+			reader.readAsDataURL(file);
 		};
 		input.click();
 	}

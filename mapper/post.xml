@@ -62,7 +62,7 @@
               , C.COM_CD_NM
               , P.TOP_PST_YN
               , P.WRT_MBR_NO
-              , P.WRT_DTT
+              , DATE_FORMAT(P.WRT_DTT, '%Y-%m-%d %T') WRT_DTT
               , P.VIEW_CNT
               , P.CMNT_YN
               , P.RCM_YN
