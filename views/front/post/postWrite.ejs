@@ -3,11 +3,15 @@
 		<input type="text" class="form-control" name="pstTtl" value="" placeholder="제목을 입력하세요." style="width:100%"/>
 	</div>
 	<div class="form-group">
-		<textarea name="pstCntn" id="edit_contents"></textarea>
+		<textarea name="pstCntn" id="edit_contents" style="width:100%;"></textarea>
 	</div>
-	<div class="form-group float-right">
-		<button type="button" class="btn btn-success" data-toggle="modal" data-target="#postPop">등록</button>
-		<button type="button" class="btn btn-outline-secondary">취소</button>
+	<div class="form-group">
+		<button type="button" class="btn btn-secondary btn_edit" value="tiny">Tiny-Editor</button>
+		<button type="button" class="btn btn-outline-secondary btn_edit" value="smart">Smart-Editor</button>
+		<div class="float-right">
+			<button type="button" class="btn btn-success" data-toggle="modal" data-target="#postPop">등록</button>
+			<button type="button" class="btn btn-outline-secondary">취소</button>
+		</div>
 	</div>
 
 	<div class="modal" id="postPop">
@@ -113,63 +117,8 @@
 	</div>
 </div>
 <script type="text/javascript" src="/tinymce/tinymce.min.js"></script>
+<script type="text/javascript" src="/smart_editor2/js/service/HuskyEZCreator.js" charset="utf-8"></script>
 <script>
-//Tiny Editor
-tinymce.init({
-	selector: "#edit_contents",
-	//theme: "modern",
-	language_url: '/tinymce/langs/ko_KR.js',
-	menubar:false,
-	//height: 600,
-	autoresize_min_height: 400,
-	autoresize_max_height: 800,
-	plugins: "autolink autosave code link media image table textcolor autoresize paste",
-	toolbar: "undo redo | fontselect | fontsizeselect | bold underline italic forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | table link media image code",
-	automatic_uploads: true,
-	file_picker_types: 'image',
-	images_upload_url: '/file/edit-img',	//이미지 업로드 url
-	image_title: true,
-	paste_data_images: true,
-	//image_dimensions: false,
-	relative_urls: false,
-	//remove_script_host: false,
-	setup: function (editor) {
-		editor.on('init', function(args) {
-			editor = args.target;
-			editor.on('NodeChange', function(e) {
-				if (e && e.element.nodeName.toLowerCase() == 'img') {	//이미지 사이즈 자동 조정
-					width = e.element.width;
-					height = e.element.height;
-					if (width > 1000) {
-						height = height / (width / 1000);
-						width = 1000;
-					}
-					tinyMCE.DOM.setAttribs(e.element, {'width': width, 'height': height});
-				}
-			});
-		});	
-	},
-	file_picker_callback: function(cb, value, meta) {
-		let input = document.createElement('input');
-		input.setAttribute('type', 'file');
-		input.setAttribute('accept', 'image/*');
-		input.onchange = function() {
-			let file = this.files[0];
-			let reader = new FileReader();
-			reader.onload = function () {
-				let id = 'blobid' + (new Date()).getTime();
-				let blobCache =  tinymce.activeEditor.editorUpload.blobCache;
-				let base64 = reader.result.split(',')[1];
-				let blobInfo = blobCache.create(id, file, base64);
-				blobCache.add(blobInfo);
-				cb(blobInfo.blobUri(), { title: file.name });
-			};
-			reader.readAsDataURL(file);
-		};
-		input.click();
-	}
-});
-
 //datePicker
 $('.datePicker').datepicker({
 	format: "yyyy-mm-dd",	//데이터 포맷 형식(yyyy : 년 mm : 월 dd : 일 )
@@ -198,10 +147,12 @@ $('.datePicker').datepicker({
 });
 
 window.addEventListener('DOMContentLoaded', () => {
+	fn_tinyEditorLoad();
+
 	// 등록 팝업 발행시간 라디오 변경
-	let timeRadio = document.querySelectorAll('#postPop input[name="timeRadio"]');
-	for(let i = 0; i < timeRadio.length; i++) {
-		timeRadio[i].addEventListener('change', (e) => {
+	let timeRadios = document.querySelectorAll('#postPop input[name="timeRadio"]');
+	for(let i = 0; i < timeRadios.length; i++) {
+		timeRadios[i].addEventListener('change', (e) => {
 			let thisVal = e.currentTarget.value,
 				rsrvInps = document.getElementsByClassName('post_rsrv');
 			for(let i = 0; i < rsrvInps.length; i++) {
@@ -248,7 +199,111 @@ window.addEventListener('DOMContentLoaded', () => {
 			}
 		}
 	});
+
+	//에디터 변경
+	let btnEdits = document.getElementsByClassName('btn_edit');
+	for(let i = 0; i < btnEdits.length; i++) {
+		btnEdits[i].addEventListener('click', (e) => {
+			tinymce.remove();
+			fn_smartEditorRemove();
+			document.getElementById('edit_contents').style.display = 'block';
+			let thisVal = e.currentTarget.value;
+			switch(thisVal) {
+				case 'tiny': fn_tinyEditorLoad(); break;
+				case 'smart': fn_smartEditorLoad(); break;
+				default: break;
+			}
+
+			let btnEdits2 = document.getElementsByClassName('btn_edit');
+			for(let j = 0; j < btnEdits2.length; j++) {
+				btnEdits2[j].classList.add('btn-outline-secondary');
+				btnEdits2[j].classList.remove('btn-secondary');
+			}
+			btnEdits[i].classList.add('btn-secondary');
+			btnEdits[i].classList.remove('btn-outline-secondary');
+		});
+	}
 });
+
+/* Tiny Editor */
+let fn_tinyEditorLoad = () => {
+	tinymce.init({
+		selector: "#edit_contents",
+		//theme: "modern",
+		language_url: '/tinymce/langs/ko_KR.js',
+		menubar:false,
+		//height: 600,
+		autoresize_min_height: 400,
+		autoresize_max_height: 800,
+		plugins: "autolink autosave code link media image table textcolor autoresize paste",
+		toolbar: "undo redo | fontselect | fontsizeselect | bold underline italic forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | table link media image code",
+		automatic_uploads: true,
+		file_picker_types: 'image',
+		images_upload_url: '/file/edit-img',	//이미지 업로드 url
+		image_title: true,
+		paste_data_images: true,
+		//image_dimensions: false,
+		relative_urls: false,
+		//remove_script_host: false,
+		setup: function (editor) {
+			editor.on('init', function(args) {
+				editor = args.target;
+				editor.on('NodeChange', function(e) {
+					if (e && e.element.nodeName.toLowerCase() == 'img') {	//이미지 사이즈 자동 조정
+						width = e.element.width;
+						height = e.element.height;
+						if (width > 1000) {
+							height = height / (width / 1000);
+							width = 1000;
+						}
+						tinyMCE.DOM.setAttribs(e.element, {'width': width, 'height': height});
+					}
+				});
+			});	
+		},
+		file_picker_callback: function(cb, value, meta) {
+			let input = document.createElement('input');
+			input.setAttribute('type', 'file');
+			input.setAttribute('accept', 'image/*');
+			input.onchange = function() {
+				let file = this.files[0];
+				let reader = new FileReader();
+				reader.onload = function () {
+					let id = 'blobid' + (new Date()).getTime();
+					let blobCache =  tinymce.activeEditor.editorUpload.blobCache;
+					let base64 = reader.result.split(',')[1];
+					let blobInfo = blobCache.create(id, file, base64);
+					blobCache.add(blobInfo);
+					cb(blobInfo.blobUri(), { title: file.name });
+				};
+				reader.readAsDataURL(file);
+			};
+			input.click();
+		}
+	});
+};
+
+/* Smart Editor */
+let fn_smartEditorLoad = () => {
+	let oEditors = [];
+	nhn.husky.EZCreator.createInIFrame({
+		oAppRef: oEditors,
+		elPlaceHolder: "edit_contents",
+		sSkinURI: "/smart_editor2/SmartEditor2Skin.html",
+		fCreator: "createSEditor2",
+		htParams : { 
+			bUseToolbar : true
+		, bUseVerticalResizer : true
+		, bUseModeChanger : true
+		}
+	});
+}
+let fn_smartEditorRemove = () => {
+	let iframes = document.querySelectorAll('iframe');
+	for (let i = 0; i < iframes.length; i++) {
+		iframes[i].parentNode.removeChild(iframes[i]);
+	}
+}
 
 /* 게시글 등록 함수 */
 let fn_postSave = (dataForm) => {
