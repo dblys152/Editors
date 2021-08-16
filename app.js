@@ -16,7 +16,7 @@ app.set('layout', 'common/layout.ejs');
 app.use(expressLayouts);
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({limit: '50mb', extended: true, parameterLimit: 1000000}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(fileUpload({createParentPath: true}));

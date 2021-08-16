@@ -7,6 +7,7 @@ const mime = require('mime-types');
 const fileSrc = 'C:/dev/web_files/';
 
 router.post('/edit-img', async (req, res, next) => {
+    console.log(req.body);
     try {
         if(!req.files || Object.keys(req.files).length === 0) {
             return next({status: 400, message: "No file uploaded"});
