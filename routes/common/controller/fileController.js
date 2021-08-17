@@ -6,25 +6,22 @@ const crypto = require('crypto');
 const mime = require('mime-types');
 const fileSrc = 'C:/dev/web_files/';
 
+/* Tiny Editor 이미지 업로드 */
 router.post('/edit-img', async (req, res, next) => {
-    console.log(req.body);
     try {
         if(!req.files || Object.keys(req.files).length === 0) {
-            return next({status: 400, message: "No file uploaded"});
+            return next({status: 400, message: "파일이 존재하지 않습니다."});
         }
-        
-        let file = req.files.file, 
-            ext = path.extname(file.name),
-            fileNm = path.join('tinyImg' + Date.now() + ext),
-            pathNm = fileSrc + fileNm;
-        
+        let file = req.files.file;
         if(file == null) {
-            return next({status: 400, message: "user_file이 없습니다."});
+            return next({status: 400, message: "파일이 없습니다."});
         }
         if(file.mimetype != 'image/jpeg' && file.mimetype != 'image/png' && file.mimetype != 'image/gif') {
             return next({status: 400, message: ".jpeg, .png, .gif 파일만 업로드 가능합니다."});
         }
-
+        let ext = path.extname(file.name),
+            fileNm = path.join('tinyImg' + Date.now() + ext),
+            pathNm = fileSrc + fileNm;
         file.mv(pathNm, async (err) => {
             if(err) return next({status: 500, message: err});
 

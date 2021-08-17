@@ -25,7 +25,7 @@ router.post('/post', async (req, res, next) => {
         postForm.setTopPstYn(data.topPstYn);
         let mbrNo = 1;  //작성자회원번호(임의)
         let pstNo = await postService.insertPost(postForm, mbrNo);
-        res.json({status:201, message:"성공", pstNo: pstNo});
+        res.status(201).json({message:"성공", pstNo: pstNo});
     } catch(err) {
         next(err);
     }

@@ -9,7 +9,7 @@
 		<button type="button" class="btn btn-secondary btn_edit" value="tiny">Tiny-Editor</button>
 		<button type="button" class="btn btn-outline-secondary btn_edit" value="smart">Smart-Editor</button>
 		<div class="float-right">
-			<button type="button" class="btn btn-success" data-toggle="modal" data-target="#postPop">등록</button>
+			<button type="button" class="btn btn-success on" data-toggle="modal" data-target="#postPop">등록</button>
 			<button type="button" class="btn btn-outline-secondary">취소</button>
 		</div>
 	</div>
@@ -117,13 +117,13 @@
 	</div>
 </div>
 <script type="text/javascript" src="/tinymce/tinymce.min.js"></script>
-<script type="text/javascript" src="/smartEditor2/js/HuskyEZCreator.js" charset="utf-8"></script>
+<script type="text/javascript" src="/smartEditor2/js/service/HuskyEZCreator.js" charset="utf-8"></script>
 <script type="text/javascript" src="/javascripts/datePicker.js" charset="utf-8"></script>
 <script>
 window.addEventListener('DOMContentLoaded', () => {
-	fn_tinyEditorLoad();	//Tiny Editor 로드
+	fn_tinyEditorLoad();	// Tiny Editor 로드
 
-	//에디터 변경
+	// 에디터 변경
 	let btnEdits = document.getElementsByClassName('btn_edit');
 	for(let i = 0; i < btnEdits.length; i++) {
 		btnEdits[i].addEventListener('click', (e) => {
@@ -146,9 +146,9 @@ window.addEventListener('DOMContentLoaded', () => {
 			let btnEdits2 = document.getElementsByClassName('btn_edit');
 			for(let j = 0; j < btnEdits2.length; j++) {
 				btnEdits2[j].classList.add('btn-outline-secondary');
-				btnEdits2[j].classList.remove('btn-secondary');
+				btnEdits2[j].classList.remove('btn-secondary', 'on');
 			}
-			btnEdits[i].classList.add('btn-secondary');
+			btnEdits[i].classList.add('btn-secondary', 'on');
 			btnEdits[i].classList.remove('btn-outline-secondary');
 		});
 	}
@@ -173,7 +173,8 @@ window.addEventListener('DOMContentLoaded', () => {
 	document.getElementById('postSave').addEventListener('click', () => {
 		let pstTtlInp = document.querySelector('input[name="pstTtl"]'),
 			pstCntn = '',
-			edit = document.getElementsByClassName('btn-secondary')[0].value;
+			edit = document.querySelector('.btn-secondary.on').value;
+		console.log(edit);
 		if(edit == 'tiny') {
 			pstCntn = tinyMCE.activeEditor.getContent();
 		} else if(edit == 'smart') {
@@ -213,7 +214,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 });
 
-/* Tiny Editor */
+/* Tiny Editor 로드 */
 function fn_tinyEditorLoad() {
 	tinymce.init({
 		selector: "#edit_contents",
@@ -227,7 +228,7 @@ function fn_tinyEditorLoad() {
 		toolbar: "undo redo | fontselect | fontsizeselect | bold underline italic forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | table link media image code",
 		automatic_uploads: true,
 		file_picker_types: 'image',
-		images_upload_url: '/file/edit-img',	//이미지 업로드 url
+		images_upload_url: '/file/edit-img/tiny',	//이미지 업로드 url
 		image_title: true,
 		paste_data_images: true,
 		//image_dimensions: false,
@@ -271,7 +272,7 @@ function fn_tinyEditorLoad() {
 	});
 };
 
-/* Smart Editor */
+/* Smart Editor 로드 */
 let oEditors = [];
 function fn_smartEditorLoad() {
 	nhn.husky.EZCreator.createInIFrame({
@@ -305,15 +306,12 @@ function fn_postSave(dataForm) {
         method: 'POST'
       , body: JSON.stringify(dataForm)
 	  , headers: {"Content-Type": "application/json"}
-    }).then(res => res.json()
-    ).then(json => { 
-		if(json.status >= 200 && json.status < 300) {
-			alert('게시글이 등록되었습니다.');
-			location.href='/view/' + json.pstNo;
-		} else {
-			alert('게시글 등록 실패하였습니다.');
-			console.log(json.message);
-		}      
+    }).then(res => {
+		if(!res.ok) throw res.statusText;
+		return res.json();
+	}).then(json => { 
+		alert('게시글이 등록되었습니다.');
+		location.href='/view/' + json.pstNo;    
     }).catch(error => {
 		alert('게시글 등록 실패하였습니다.');
         console.log(error);
