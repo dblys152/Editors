@@ -17,7 +17,7 @@ jQuery(function ($) {
 
     // Change this to the location of your server-side upload handler:
     var gnu = {
-        url : './php/?_nonce='+ed_nonce,
+        url : '/file/edit-img/smart',
         container_el : 'body',
         dreg_area : '#drag_area',
         dreg_area_list : '#drag_area > ul',
@@ -172,7 +172,7 @@ jQuery(function ($) {
                             .append('<br>')
                             .append($('<span/>').text(size_text))
                             .find("img.pre_thumb").attr({"src":file.url,"width":ret['width'],"height":ret['height']})
-                            .end().find(".delete_img").attr({"data-delete":file.name,"data-url":file.url});
+                            .end().find(".delete_img").attr({"data-delete":file.name,"data-url":file.url,"data-width":file.width,"data-height":file.height});
                 } else if (file.error) {
                     var error = $('<span class="text-danger"/>').text(file.error);
                     $(data.context.children()[index])
@@ -207,9 +207,13 @@ jQuery(function ($) {
         setPhotoToEditor : function(oFileInfo){
             if (!!opener && !!opener.nhn && !!opener.nhn.husky && !!opener.nhn.husky.PopUpManager) {
                 //스마트 에디터 플러그인을 통해서 넣는 방법 (oFileInfo는 Array)
-                opener.nhn.husky.PopUpManager.setCallback(window, 'SET_PHOTO', [oFileInfo]);
+                //opener.nhn.husky.PopUpManager.setCallback(window, 'SET_PHOTO', [oFileInfo]);
                 //본문에 바로 tag를 넣는 방법 (oFileInfo는 String으로 <img src=....> )
-                //opener.nhn.husky.PopUpManager.setCallback(window, 'PASTE_HTML', [oFileInfo]);
+                var imgArr = [];
+                for(var i = 0; i < oFileInfo.length; i++) {
+                    imgArr.push('<img src="'+ oFileInfo[i].sFileURL +'" width="'+ oFileInfo[i].sWidth +'" height="'+ oFileInfo[i].sHeight +'">');
+                }
+                opener.nhn.husky.PopUpManager.setCallback(window, 'PASTE_HTML', [imgArr]);
             }
         }
     }
@@ -227,12 +231,13 @@ jQuery(function ($) {
         // send Blob objects via XHR requests:
         disableImageResize: true,
         limit_filesLength : gnu.file_limit
-    }).on('fileuploadadd', function (e, data) {
+    }).on('fileuploadadd', function (e, data) {  
         gnu._add(e, data);
     }).on('fileuploadprocessalways', function (e, data) {
         gnu._processalways(e, data);
     }).on('fileuploaddone', function (e, data) {
-
+        
+        //응답 data : "files": [{"url": ..., "name": ..., "width": ..., "height": ...}]
         gnu._done( e, data );
 
     }).on('fileuploadfail', function (e, data) {
@@ -331,6 +336,14 @@ jQuery(function ($) {
             aResult[j]['sAlign'] = '';
             aResult[j]['sFileName'] = $(this).attr("data-delete");
             aResult[j]['sFileURL'] = $(this).attr("data-url");
+            var width = $(this).attr("data-width"),
+                height = $(this).attr("data-height");
+            if (width > 1000) {
+                height = height / (width / 1000);
+                width = 1000;
+            }
+            aResult[j]['sWidth'] = width;
+            aResult[j]['sHeight'] = height;
             j++;
         });
         if( aResult.length ){

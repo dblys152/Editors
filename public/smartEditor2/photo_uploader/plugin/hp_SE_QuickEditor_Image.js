@@ -393,7 +393,7 @@ nhn.husky.SE_QuickEditor_Image = jindo.$Class({
                 htImageSize.height = htSize.nImgBeforeHeight;
                 htImageSize.rwidth = htSize.nReserveWidth;
                 htImageSize.rheight = htSize.nReserveHeight;
-                var msg = this.oApp.$MSG("SE_QuickEditor_Image.exceedMaxSize").replace("${nEditorWidth}", nEditorWidth);
+                var msg = this.oApp.$MSG("").replace("${nEditorWidth}", nEditorWidth);
                 alert(msg);
             }
         }

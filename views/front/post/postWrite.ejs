@@ -3,14 +3,14 @@
 		<input type="text" class="form-control" name="pstTtl" value="" placeholder="제목을 입력하세요." style="width:100%"/>
 	</div>
 	<div class="form-group">
-		<textarea name="pstCntn" id="edit_contents" style="width:100%;height:400px"></textarea>
+		<textarea name="pstCntn" id="edit_contents" style="width:100%;height:500px"></textarea>
 	</div>
 	<div class="form-group">
-		<button type="button" class="btn btn-secondary btn_edit" value="tiny">Tiny-Editor</button>
+		<button type="button" class="btn btn-secondary edit_on btn_edit" value="tiny">Tiny-Editor</button>
 		<button type="button" class="btn btn-outline-secondary btn_edit" value="smart">Smart-Editor</button>
 		<div class="float-right">
-			<button type="button" class="btn btn-success on" data-toggle="modal" data-target="#postPop">등록</button>
-			<button type="button" class="btn btn-outline-secondary">취소</button>
+			<button type="button" class="btn btn-success" data-toggle="modal" data-target="#postPop">등록</button>
+			<a href="/" class="btn btn-outline-secondary">취소</a>
 		</div>
 	</div>
 
@@ -128,28 +128,30 @@ window.addEventListener('DOMContentLoaded', () => {
 	for(let i = 0; i < btnEdits.length; i++) {
 		btnEdits[i].addEventListener('click', (e) => {
 			let thisVal = e.currentTarget.value;
-			switch(thisVal) {
-				case 'tiny': 
-						let editTa = document.getElementById('edit_contents');
-						editTa.style.display = 'block';
-						editTa.value = oEditors.getById["edit_contents"].getIR();
-						fn_smartEditorRemove(); //Smart Editor2 제거
-						fn_tinyEditorLoad();	//Tiny Editor 로드
-						break;
-				case 'smart': 
-						tinymce.remove();		//Tiny Editor 제거
-						fn_smartEditorLoad(); 	//Smart Editor2 로드
-						break;
-				default: break;
-			}
+			if(thisVal != document.querySelector('.btn-secondary.edit_on').value) {
+				switch(thisVal) {
+					case 'tiny': 
+							let editTa = document.getElementById('edit_contents');
+							editTa.style.display = 'block';
+							editTa.value = oEditors.getById["edit_contents"].getIR();
+							fn_smartEditorRemove(); //Smart Editor2 제거
+							fn_tinyEditorLoad();	//Tiny Editor 로드
+							break;
+					case 'smart': 
+							tinymce.remove();		//Tiny Editor 제거
+							fn_smartEditorLoad(); 	//Smart Editor2 로드
+							break;
+					default: break;
+				}
 
-			let btnEdits2 = document.getElementsByClassName('btn_edit');
-			for(let j = 0; j < btnEdits2.length; j++) {
-				btnEdits2[j].classList.add('btn-outline-secondary');
-				btnEdits2[j].classList.remove('btn-secondary', 'on');
+				let btnEdits2 = document.getElementsByClassName('btn_edit');
+				for(let j = 0; j < btnEdits2.length; j++) {
+					btnEdits2[j].classList.add('btn-outline-secondary');
+					btnEdits2[j].classList.remove('btn-secondary', 'edit_on');
+				}
+				btnEdits[i].classList.add('btn-secondary', 'edit_on');
+				btnEdits[i].classList.remove('btn-outline-secondary');
 			}
-			btnEdits[i].classList.add('btn-secondary', 'on');
-			btnEdits[i].classList.remove('btn-outline-secondary');
 		});
 	}
 
@@ -173,7 +175,7 @@ window.addEventListener('DOMContentLoaded', () => {
 	document.getElementById('postSave').addEventListener('click', () => {
 		let pstTtlInp = document.querySelector('input[name="pstTtl"]'),
 			pstCntn = '',
-			edit = document.querySelector('.btn-secondary.on').value;
+			edit = document.querySelector('.btn-secondary.edit_on').value;
 		console.log(edit);
 		if(edit == 'tiny') {
 			pstCntn = tinyMCE.activeEditor.getContent();
@@ -222,8 +224,7 @@ function fn_tinyEditorLoad() {
 		language_url: '/tinymce/langs/ko_KR.js',
 		menubar:false,
 		//height: 600,
-		autoresize_min_height: 400,
-		autoresize_max_height: 800,
+		autoresize_min_height: 500,
 		plugins: "autolink autosave code link media image table textcolor autoresize paste",
 		toolbar: "undo redo | fontselect | fontsizeselect | bold underline italic forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | table link media image code",
 		automatic_uploads: true,
@@ -298,8 +299,12 @@ function fn_smartEditorRemove() {
 
 /* 게시글 등록 함수 */
 function fn_postSave(dataForm) {
-	if(document.getElementsByClassName('btn-secondary')[0].value == 'tiny') {
-		tinymce.triggerSave();	//양식 제출 전 실행
+	let edit = document.querySelector('.btn-secondary.edit_on').value;
+	//양식 제출 전 실행
+	if(edit == 'tiny') {
+		//tinymce.triggerSave();	
+	} else if(edit == 'smart') {
+		oEditors.getById["edit_contents"].exec("UPDATE_CONTENTS_FIELD", []);
 	}
 
 	fetch('/post', {
@@ -311,7 +316,7 @@ function fn_postSave(dataForm) {
 		return res.json();
 	}).then(json => { 
 		alert('게시글이 등록되었습니다.');
-		location.href='/view/' + json.pstNo;    
+		location.replace('/view/' + json.pstNo);    
     }).catch(error => {
 		alert('게시글 등록 실패하였습니다.');
         console.log(error);
