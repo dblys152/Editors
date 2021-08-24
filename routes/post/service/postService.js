@@ -14,9 +14,14 @@ exports.insertPost = async (postForm, mbrNo) => {
         let pstNo = await postDao.insertPost(conn, postForm);
         postForm.setPstNo(pstNo);
         await postDao.insertPostContents(conn, postForm);
-        // if(pstNo != null && postForm.tagNm != null) {
-        //     let tagList = postForm.tagNm.split(' ');
-        // }
+        if(postForm.tagNm != null && postForm.tagNm != '') {
+            let tagList = postForm.tagNm.split(',');
+            for(let i = 0; i < tagList.length; i++) {
+                postForm.setTagNm(tagList[i].trim());
+                postForm.setTagSeq(i+1);
+                await postDao.insertPostTag(conn, postForm);
+            }
+        }
 
         conn.commit();              //트랜잭션 종료(COMMIT)
         conn.release();             //DB연결 반환
@@ -33,6 +38,7 @@ exports.selectPost = async (pstNo) => {
     if(!conn) throw {"status": 500, "message": "DB connection error"};
     try {
         let postInfo = await postDao.selectPost(conn, {"pstNo": pstNo});
+        postInfo.tagList = await postDao.selectPostTagList(conn, {"pstNo": pstNo});
         conn.release();             //DB연결 반환
         return postInfo;
     } catch(err) {

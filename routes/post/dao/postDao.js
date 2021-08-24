@@ -26,6 +26,17 @@ exports.insertPostContents = async (conn, postForm) => {
     }
 };
 
+exports.insertPostTag = async (conn, postForm) => {
+    try {
+        let sql = mybatisMapper.getStatement('post', 'insertPostTag', postForm, sqlFormat);
+        console.log(sql);
+        await conn.execute(sql);
+    } catch(err) {
+        console.log(err);
+        throw {"status": 500, "message": "SQL execution error"};
+    }
+};
+
 exports.selectPost = async (conn, postForm) => {
     try {
         let sql = mybatisMapper.getStatement('post', 'selectPost', postForm, sqlFormat);
@@ -33,6 +44,19 @@ exports.selectPost = async (conn, postForm) => {
         let [postInfo] = await conn.query(sql);
         console.log(postInfo);
         return postInfo[0];
+    } catch(err) {
+        console.log(err);
+        throw {"status": 500, "message": "SQL execution error"};
+    }
+};
+
+exports.selectPostTagList = async (conn, postForm) => {
+    try {
+        let sql = mybatisMapper.getStatement('post', 'selectPostTagList', postForm, sqlFormat);
+        console.log(sql);
+        let [tagList] = await conn.query(sql);
+        console.log(tagList);
+        return tagList;
     } catch(err) {
         console.log(err);
         throw {"status": 500, "message": "SQL execution error"};

@@ -9,9 +9,10 @@
                     <h1 class="fw-bolder mb-1"><%= postInfo.PST_TTL %></h1>
                     <!-- Post meta content-->
                     <div class="text-muted fst-italic mb-2"><%= postInfo.WRT_DTT %></div>
-                    <!-- Post categories-->
-                    <a class="badge bg-info text-white link-light" href="#!">Web Design</a>
-                    <a class="badge bg-info text-white link-light" href="#!">Freebies</a>
+                    <!-- Post tags-->
+                    <% for(let i = 0; i < postInfo.tagList.length; i++) { %>
+                        <a class="badge bg-info text-white link-light" href="#"><%= postInfo.tagList[i].TAG_NM %></a>
+                    <% } %>
                 </header>
                 <!-- Post content-->
                 <section class="mb-5">

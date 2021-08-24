@@ -62,7 +62,8 @@
 					<div class="form-group row">
 						<label class="col-sm-3 col-form-label">태그 설정</label>
 						<div class="col-sm-9">
-							<textarea class="form-control" name="tagNm" rows="3"></textarea>	
+							<input type="text" data-role="tagsinput">
+							<!-- <textarea class="form-control" name="tagNm" rows="3"></textarea> -->
 						</div>
 					</div>
 					<div class="form-group row">
@@ -119,6 +120,8 @@
 <script type="text/javascript" src="/tinymce/tinymce.min.js"></script>
 <script type="text/javascript" src="/smartEditor2/js/service/HuskyEZCreator.js" charset="utf-8"></script>
 <script type="text/javascript" src="/javascripts/datePicker.js" charset="utf-8"></script>
+<script type="text/javascript" src="/bootstrap4/tagsinput.js" charset="utf-8"></script>
+<link rel="stylesheet" type="text/css" href="/bootstrap4/tagsinput.css">
 <script>
 window.addEventListener('DOMContentLoaded', () => {
 	fn_tinyEditorLoad();	// Tiny Editor 로드
@@ -176,7 +179,6 @@ window.addEventListener('DOMContentLoaded', () => {
 		let pstTtlInp = document.querySelector('input[name="pstTtl"]'),
 			pstCntn = '',
 			edit = document.querySelector('.btn-secondary.edit_on').value;
-		console.log(edit);
 		if(edit == 'tiny') {
 			pstCntn = tinyMCE.activeEditor.getContent();
 		} else if(edit == 'smart') {
@@ -198,6 +200,13 @@ window.addEventListener('DOMContentLoaded', () => {
 				alert('예약 날짜를 입력해주세요.');
 				form[fname="postDate"].focus();
 			} else if(confirm('게시글을 등록 하시겠습니까?')) {
+				let tags = document.getElementsByClassName('badge'),
+					tagNm = '';
+				for(let i = 0; i < tags.length; i++) {
+					tagNm += tags[i].innerText.trim() + ',';
+				}
+				tagNm = tagNm.substring(0, tagNm.length-1);
+
 				let dataForm = {
 					"pstTtl": pstTtlInp.value
 				  , "pstCntn": pstCntn
@@ -205,7 +214,7 @@ window.addEventListener('DOMContentLoaded', () => {
 				  , "pstDispCd": form[fname="pstDispCd"].value
 				  , "cmntYn": (form[fname="cmntYn"].checked == true ? 'Y' : 'N')
 				  , "rcmYn": (form[fname="rcmYn"].checked == true ? 'Y' : 'N')
-				  , "tagNm": form[fname="tagNm"].value
+				  , "tagNm": tagNm
 				  , "pstStDtt": (timeRadioVal != '2' ? null : postDate + ' ' + postHour + ':' + postMinute + ':00')
 				  , "topPstYn": (form[fname="topPstYn"].checked == true ? 'Y' : 'N')
 				};
@@ -302,7 +311,7 @@ function fn_postSave(dataForm) {
 	let edit = document.querySelector('.btn-secondary.edit_on').value;
 	//양식 제출 전 실행
 	if(edit == 'tiny') {
-		//tinymce.triggerSave();	
+		tinymce.triggerSave();	
 	} else if(edit == 'smart') {
 		oEditors.getById["edit_contents"].exec("UPDATE_CONTENTS_FIELD", []);
 	}

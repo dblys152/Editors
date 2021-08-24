@@ -51,6 +51,19 @@
                                     )
     </insert>
 
+    <insert id="insertPostTag">
+        INSERT  INTO TAG  (
+                              PST_NO
+                            , TAG_SEQ
+                            , TAG_NM
+                          )
+        VALUES            (
+                              ${pstNo}
+                            , ${tagSeq}
+                            , #{tagNm}
+                          )
+    </insert>
+
     <select id="selectPost">
         SELECT
                 P.PST_NO
@@ -78,5 +91,16 @@
         LEFT	JOIN COM_CODE C
         ON 		P.PST_DISP_CD = C.COM_CD
         WHERE	1 = 1
+    </select>
+
+    <select id="selectPostTagList">
+        SELECT
+                PST_NO
+              , TAG_SEQ
+              , TAG_NM
+        FROM    TAG
+        WHERE   1 = 1
+        AND     PST_NO = ${pstNo}
+        ORDER   BY  TAG_SEQ
     </select>
 </mapper>
