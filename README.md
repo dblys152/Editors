@@ -1,8 +1,9 @@
 # Editors
 
 #### Tiny Editor, Smart Editor(네이버 스마트에디터) 예제입니다.
-#### Tiny Editor (ver 4.9.2)
-#### Smart Editor (ver 2.9)
+- Server : Node.js + Express.js
+- View engin : ejs
+- Editor Version : Tiny Editor (ver 4.9.2) / Smart Editor (ver 2.9)
 
 ## Tiny Editor 기능
 - 에디터에 이미지 드래그 드롭 가능 (다중 O)
