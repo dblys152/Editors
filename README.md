@@ -15,6 +15,11 @@
 - 이미지 클릭 후 우측 하단의 팝업창에서 크기 조정, 테두리, 정렬 가능
 - 입력창 수동 조절
 
+## 실행 전
+#### 환경변수 .env 파일 설정 필요
+- 파일명 : .env.development 
+- 환경변수 : DB_HOST, DB_PORT, DB_USER, DB_PW, DB_NM
+
 ## 스크린샷
 ![tiny editor](./tiny_editor_1.JPG)
 ![tiny editor](./tiny_editor_2.JPG)
